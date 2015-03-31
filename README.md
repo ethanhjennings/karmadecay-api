@@ -11,7 +11,10 @@ for item in kdapi.check("imgur.com/ndDmnN4"):
 
 You can use imgur urls, or reddit submission urls.
 
-### Available data
+## Installation
+Clone this repo and copy the `kdapi` directory into your project. Make sure you have [lxml](http://lxml.de/) and [requests](http://docs.python-requests.org/en/latest/) installed.
+
+## Available data
 | name        | description                                             |
 | ------------|---------------------------------------------------------|
 | title       | reddit submission title                                 |
@@ -28,6 +31,3 @@ You can use imgur urls, or reddit submission urls.
 
 If you really need these values to be guaranteed you can search for the link using [praw](https://github.com/praw-dev/praw).
 
-
-## Installation
-Clone this repo and copy the `kdapi` directory into your project. Make sure you have [lxml](http://lxml.de/) and [requests](http://docs.python-requests.org/en/latest/) installed.
