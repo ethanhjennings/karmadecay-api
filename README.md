@@ -1,14 +1,11 @@
 # karmadecay-api
 Unofficial Python3 "API" for [karmadecay.com](http://karmadecay.com). This works by scraping the site's HTML.
 
-# Installation
-Clone this repo and copy the `kdapi` directory into your project. Make sure you have [lxml](http://lxml.de/) and [requests](http://docs.python-requests.org/en/latest/) installed.
-
-# Usage
+## Usage
 ```python
 import kdapi
 
-for item in kdapi.check("imgur.com/ndDmnN4"):                                                                                                                             
+for item in kdapi.check("imgur.com/ndDmnN4"):
     print(item.link)
 ```
 
@@ -30,3 +27,7 @@ You can use imgur urls, or reddit submission urls.
 *Not always available, will sometimes be set to None
 
 If you really need these values to be guaranteed you can search for the link using [praw](https://github.com/praw-dev/praw).
+
+
+## Installation
+Clone this repo and copy the `kdapi` directory into your project. Make sure you have [lxml](http://lxml.de/) and [requests](http://docs.python-requests.org/en/latest/) installed.
