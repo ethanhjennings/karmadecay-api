@@ -54,7 +54,7 @@ def _extractItem(root):
 @RateLimited(0.5) # allow no more than one call every two seconds
 def check(url):
 
-    is_reddit_link = parse.urlparse(url if url.startswith("http://") else "http://" + url).hostname.split('.')[-2:] == "reddit.com"
+    is_reddit_link = parse.urlparse(url if url.startswith("http://") else "http://" + url).hostname.split('.')[-2:][0] == "reddit"
     
     kd_url = "http://karmadecay.com/search?kdtoolver=b1&q=" + parse.quote(url)
     
