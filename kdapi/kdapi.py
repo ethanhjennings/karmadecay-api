@@ -67,13 +67,13 @@ def check(url):
     output = []
 
     if not is_reddit_link: # only add the top item if the link was not a reddit link (to avoid duplicates)
-        headItem = _extractItem(tree.xpath("//tr[@class='s']")[0])
-        if headItem.link is not None: # make sure there's a link present, sometimes there's not one
-            output.append(headItem)
-
+        headResult = tree.xpath("//tr[@class='s']")
+        if len(headResult) > 0: # make sure there's actually a head item
+            headItem = _extractItem(headResult[0])
+            if headItem.link is not None: # make sure there's a link present, sometimes there's not one
+                output.append(headItem)
 
     results = tree.xpath("//tr[@class='ls']/preceding::tr[@class='result']")
-
 
     for result in results:
         output.append(_extractItem(result))
