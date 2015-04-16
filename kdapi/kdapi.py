@@ -36,6 +36,18 @@ def _extract(root,selector,regex=None):
          match = re.search(regex, " ".join(string.split()))
          return match.group() if match is not None else None
 
+_defaultVal = None
+def setDefault(val): # the default value for when a piece of info is not available
+    global _defaultVal
+    _defaultVal = val
+
+def _cast(func,num):
+    try:
+        return func(num)
+    except Exception:
+        global _defaultVal
+        return defaultVal
+
 def _extractItem(root):
     item = KDItem()
     info = root.xpath("td[@class='info']")[0]
@@ -43,15 +55,16 @@ def _extractItem(root):
     item.imgur_link = _extract(root,"td[@class='img']/a/@href")
     item.title = _extract(info,"div[@class='title']/a")
     item.link = _extract(info,"div[@class='title']/a/@href")
-    item.similarity = _extract(info,"div[@class='similar']/span[@class='fr']", r'[\d\.]+(?=\%)')
+    
+    item.similarity = _cast(float,_extract(info,"div[@class='similar']/span[@class='fr']", r'[\d\.]+(?=\%)'))
     item.time = _extract(info,"div[@class='submitted']",r'(?<=submitted\s).*(?=\sago)')
     item.user = _extract(info,"div[@class='submitted']/a[1]")
     item.subreddit = _extract(info,"div[@class='submitted']/a[2]")
-    item.score = _extract(info,"div[not(@class)]/div[@class='votes']/b",r'[-\d*]+')
-    item.comments = _extract(info,"div[not(@class)]/div[@class='comments']/b",r'[-\d*]+')
+    item.score = _cast(int,_extract(info,"div[not(@class)]/div[@class='votes']/b",r'[-\d*]+'))
+    item.comments = _cast(int,_extract(info,"div[not(@class)]/div[@class='comments']/b",r'[-\d*]+'))
     return item
 
-@RateLimited(0.5) # allow no more than one call every two seconds
+@RateLimited(1.0) # allow no more than one call every two seconds
 def check(url):
 
     is_reddit_link = parse.urlparse(url if url.startswith("http://") else "http://" + url).hostname.split('.')[-2:][0] == "reddit"
@@ -60,8 +73,10 @@ def check(url):
     
     # user agent string for Chrome 41, karmadecay.com returns 401 for a "python-requests..." user agent
     user_agent = {'User-agent': "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"}
-    html = requests.get(kd_url, headers=user_agent).content
-   
+    request = requests.get(kd_url, headers=user_agent)
+    html = request.content
+    request.close()
+
     tree = etree.HTML(html)
     
     output = []
