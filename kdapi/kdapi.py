@@ -46,7 +46,7 @@ def _cast(func,num):
         return func(num)
     except Exception:
         global _defaultVal
-        return defaultVal
+        return _defaultVal
 
 def _extractItem(root):
     item = KDItem()
@@ -65,7 +65,7 @@ def _extractItem(root):
     return item
 
 @RateLimited(1.0) # allow no more than one call every two seconds
-def check(url):
+def check(url,getLessSimilar=False):
 
     is_reddit_link = parse.urlparse(url if url.startswith("http://") else "http://" + url).hostname.split('.')[-2:][0] == "reddit"
     
@@ -88,8 +88,13 @@ def check(url):
             if headItem.link is not None: # make sure there's a link present, sometimes there's not one
                 output.append(headItem)
 
-    results = tree.xpath("//tr[@class='ls']/preceding::tr[@class='result']")
+    results = tree.xpath("//tr[@class='ls' or @class='lsi']/preceding::tr[@class='result']")
 
-    for result in results:
-        output.append(_extractItem(result))
-    return output
+    output.extend([_extractItem(result) for result in results])
+
+    if not getLessSimilar:
+        return output
+
+    lessSimilar = tree.xpath("//tr[@class='ls' or @class='lsi']/following::tr[@class='result']")
+    lsOutput = [_extractItem(result) for result in lessSimilar]
+    return (output,lsOutput)
