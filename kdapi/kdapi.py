@@ -3,6 +3,7 @@ import requests
 from urllib import parse
 from lxml import etree
 from .rateLimited import RateLimited
+from functools import lru_cache
 
 class KDItem:
     def __init__(self):
@@ -65,6 +66,7 @@ def _extractItem(root):
     return item
 
 @RateLimited(1.0) # allow no more than one call every two seconds
+@lru_cache(maxsize=100) # cache recent results 
 def check(url,getLessSimilar=False):
 
     is_reddit_link = parse.urlparse(url if url.startswith("http://") else "http://" + url).hostname.split('.')[-2:][0] == "reddit"
